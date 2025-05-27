@@ -6,14 +6,17 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-counter_ts = "74QZ1uTUKCPsao19wAtRRxxQ441PeejhkAZBH7nw9EEN" 
+counter_ts = "74QZ1uTUKCPsao19wAtRRxxQ441PeejhkAZBH7nw9EEN"
+
+[programs.devnet]
+counter_ts = "74QZ1uTUKCPsao19wAtRRxxQ441PeejhkAZBH7nw9EEN"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "localnet"
-wallet = "~/.config/solana/id.json"
+cluster = "devnet"
+wallet = "/Users/Office/solana-smartcontracts/counter-ts/myprogram-keypair.json"
 
 [scripts]
 test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"

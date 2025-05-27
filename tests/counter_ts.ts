@@ -1,27 +1,39 @@
 import * as anchor from "@coral-xyz/anchor";
-import { Program } from "@coral-xyz/anchor";
-import { CounterTs } from "../target/types/counter_ts";
+import { Connection, Keypair, clusterApiUrl, PublicKey, SystemProgram } from "@solana/web3.js";
+import fs from "fs";
 
-const main = async () => {
-  const provider = anchor.AnchorProvider.env();
-  anchor.setProvider(provider);
+// Load your keypair from file
+const secret = JSON.parse(
+  fs.readFileSync("/Users/Office/.config/solana/id.json", "utf8")
+);
+const walletKeypair = Keypair.fromSecretKey(Uint8Array.from(secret));
 
-  const program = anchor.workspace.CounterTs as Program<CounterTs>;
+// Create Anchor Provider
+const connection = new Connection("https://api.devnet.solana.com", "confirmed");
+const wallet = new anchor.Wallet(walletKeypair);
+const provider = new anchor.AnchorProvider(connection, wallet, {
+  preflightCommitment: "confirmed",
+});
+anchor.setProvider(provider);
 
-  const counterAccount = anchor.web3.Keypair.generate();
+// Load IDL and Program ID
+const idl = JSON.parse(fs.readFileSync("target/idl/counter_ts.json", "utf8"));
+const programId = new PublicKey("74QZ1uTUKCPsao19wAtRRxxQ441PeejhkAZBH7nw9EEN");
 
-  // Initialize the counter
+const program = new anchor.Program(idl, programId, provider);
+
+(async () => {
+  const counterAccount = Keypair.generate();
+
   await program.methods
     .initialize()
     .accounts({
       counterAccount: counterAccount.publicKey,
-      user: provider.wallet.publicKey,
-      systemProgram: anchor.web3.SystemProgram.programId,
+      user: wallet.publicKey,
+      systemProgram: SystemProgram.programId,
     })
     .signers([counterAccount])
     .rpc();
 
-  console.log("Counter initialized at:", counterAccount.publicKey.toBase58());
-};
-
-main();
+  console.log("✅ Counter initialized at:", counterAccount.publicKey.toBase58());
+})();
