@@ -1,5 +1,14 @@
 import * as anchor from "@coral-xyz/anchor";
-import { Connection, Keypair, clusterApiUrl, PublicKey, SystemProgram } from "@solana/web3.js";
+import {
+  Connection,
+  Keypair,
+  clusterApiUrl,
+  PublicKey,
+  SystemProgram,
+  TransactionInstruction,
+  Transaction,
+} from "@solana/web3.js";
+
 import fs from "fs";
 
 // Load your keypair from file
@@ -25,7 +34,16 @@ const program = new anchor.Program(idl, provider);
 (async () => {
   const counterAccount = Keypair.generate();
 
-  await program.methods
+  // Priority fee: add Compute Budget instructions
+  const computeBudgetIx1 = anchor.web3.ComputeBudgetProgram.setComputeUnitLimit({
+    units: 200_000, // you can tweak this based on your compute
+  });
+
+  const computeBudgetIx2 = anchor.web3.ComputeBudgetProgram.setComputeUnitPrice({
+    microLamports: 5000, // higher = faster inclusion, 5000 = 0.005 SOL per CU
+  });
+
+  const tx = await program.methods
     .initialize()
     .accounts({
       counterAccount: counterAccount.publicKey,
@@ -33,7 +51,8 @@ const program = new anchor.Program(idl, provider);
       systemProgram: SystemProgram.programId,
     })
     .signers([counterAccount])
+    .preInstructions([computeBudgetIx1, computeBudgetIx2]) // ⬅️ Priority fee instructions
     .rpc();
 
-  console.log("✅ Counter initialized at:", counterAccount.publicKey.toBase58());
+  console.log("✅ Counter initialized with priority fees at:", counterAccount.publicKey.toBase58());
 })();
