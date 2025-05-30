@@ -60,7 +60,7 @@ pub struct Deposit<'info> {
     )]
     pub depositor: Account<'info, Depositor>,
     #[account(mut)]
-    pub vault_account: SystemAccount<'info>,
+    pub vault_account: SystemAccount<'info>,   // creating the pda for the vault account 
     pub system_program: Program<'info, System>,
 }
 
