@@ -1,0 +1,13 @@
+# programs/vault/Cargo.toml
+[package]
+name = "vault"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "vault"
+
+[dependencies]
+anchor-lang = {version = "0.29.0", features = ["init-if-needed"]}
+
