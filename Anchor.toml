@@ -11,7 +11,11 @@ idl-build = ["anchor-lang/idl-build"]
 counter_ts = "74QZ1uTUKCPsao19wAtRRxxQ441PeejhkAZBH7nw9EEN"
 
 [programs.devnet]
+factory="Havovdums4jVo6HwPj6iUSMLtfmaEHeBNhPBrDgDrWZy"
 vault = "HDhkebca19sS5qcas1DXkCQJoxN6upiEvc8wYZvFp4y7"
+counter_ts = "74QZ1uTUKCPsao19wAtRRxxQ441PeejhkAZBH7nw9EEN"
+vault_version2 = "2vo1Sdq39gUPV1GoivRXz8t7tqsCcaa8WiQ3AeZhHynE"
+
 
 [registry]
 url = "https://api.apr.dev"
@@ -25,6 +29,7 @@ test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
 
 [workspace]
 members = [
+  "programs/factory",
   "programs/counter-ts",
-  "programs/vault"
+  "programs/vault",
 ]
